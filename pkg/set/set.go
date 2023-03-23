@@ -15,7 +15,7 @@ type Set[T comparable] struct {
 //    set := Set[string]{}
 //    set.Add("hello")
 func (s *Set[T]) Add(value T) {
-	if !iterable.Contains[T](s.items, value) {
+	if !s.Contains(value) {
 		s.items = append(s.items, value)
 	}
 }
