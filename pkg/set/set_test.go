@@ -132,3 +132,204 @@ func TestSet_Len(t *testing.T) {
 		assert.Equal(t, 1, set.Len())
 	})
 }
+
+func TestSet_IsDisjoint(t *testing.T) {
+	t.Run("Returns true if set is disjointed", func(t *testing.T) {
+		set := Set[string]{}
+		set.Add("hello")
+		otherSet := Set[string]{}
+		otherSet.Add("world")
+
+		assert.True(t, set.IsDisjoint(otherSet))
+	})
+
+	t.Run("Returns false is set isn't disjointed", func(t *testing.T) {
+		set := Set[string]{}
+		set.Add("hello")
+		otherSet := Set[string]{}
+		otherSet.Add("hello")
+
+		assert.False(t, set.IsDisjoint(otherSet))
+	})
+}
+
+func TestSet_IsSubset(t *testing.T) {
+	t.Run("Returns true if set is a subset", func(t *testing.T) {
+		set := Set[string]{}
+		set.Add("hello")
+
+		otherSet := Set[string]{}
+		otherSet.Add("hello")
+		otherSet.Add("world")
+
+		assert.True(t, set.IsSubset(otherSet))
+	})
+
+	t.Run("Returns false if set isn't a subset", func(t *testing.T) {
+		set := Set[string]{}
+		set.Add("hello")
+
+		otherSet := Set[string]{}
+		otherSet.Add("world")
+
+		assert.False(t, set.IsSubset(otherSet))
+	})
+
+	t.Run("Returns false if set isn't a true subset", func(t *testing.T) {
+		set := Set[string]{}
+		set.Add("hello")
+
+		otherSet := Set[string]{}
+		otherSet.Add("hello")
+
+		assert.False(t, set.IsSubset(otherSet))
+	})
+}
+
+func TestSet_IsSuperset(t *testing.T) {
+	t.Run("Returns true if set is a superset", func(t *testing.T) {
+		set := Set[string]{}
+		set.Add("hello")
+		set.Add("world")
+
+		otherSet := Set[string]{}
+		otherSet.Add("world")
+
+		assert.True(t, set.IsSuperset(otherSet))
+	})
+
+	t.Run("Returns false if set isn't a superset", func(t *testing.T) {
+		set := Set[string]{}
+		set.Add("hello")
+
+		otherSet := Set[string]{}
+		otherSet.Add("world")
+
+		assert.False(t, set.IsSuperset(otherSet))
+	})
+
+	t.Run("Returns false if set isn't a true superset", func(t *testing.T) {
+		set := Set[string]{}
+		set.Add("hello")
+
+		otherSet := Set[string]{}
+		otherSet.Add("hello")
+
+		assert.False(t, set.IsSuperset(otherSet))
+	})
+}
+
+func TestSet_Union(t *testing.T) {
+	t.Run("Returns the union of two sets", func(t *testing.T) {
+		set := Set[string]{}
+		set.Add("hello")
+
+		otherSet := Set[string]{}
+		otherSet.Add("world")
+
+		newSet := set.Union(otherSet)
+
+		assert.Equal(t, []string{"hello", "world"}, newSet.Items())
+	})
+
+	t.Run("Returns the union of multiple sets", func(t *testing.T) {
+		set := Set[string]{}
+		set.Add("hello")
+
+		otherSet := Set[string]{}
+		otherSet.Add("world")
+
+		anotherSet := Set[string]{}
+		anotherSet.Add("again")
+
+		newSet := set.Union(otherSet, anotherSet)
+
+		assert.Equal(t, []string{"hello", "world", "again"}, newSet.Items())
+	})
+}
+
+func TestSet_Intersection(t *testing.T) {
+	t.Run("Returns the intersection of two sets", func(t *testing.T) {
+		set := Set[string]{}
+		set.Add("hello")
+		set.Add("world")
+
+		otherSet := Set[string]{}
+		otherSet.Add("hello")
+		otherSet.Add("again")
+
+		newSet := set.Intersection(otherSet)
+
+		assert.Equal(t, []string{"hello"}, newSet.Items())
+	})
+
+	t.Run("Returns the intersection of multiple sets", func(t *testing.T) {
+		set := Set[string]{}
+		set.Add("hello")
+		set.Add("world")
+
+		otherSet := Set[string]{}
+		otherSet.Add("hello")
+		otherSet.Add("world")
+		otherSet.Add("again")
+
+		anotherSet := Set[string]{}
+		anotherSet.Add("hello")
+		anotherSet.Add("world")
+		anotherSet.Add("bye")
+
+		newSet := set.Intersection(otherSet, anotherSet)
+
+		assert.Equal(t, []string{"hello", "world"}, newSet.Items())
+	})
+}
+
+func TestSet_Difference(t *testing.T) {
+	t.Run("Returns the difference of two sets", func(t *testing.T) {
+		set := Set[string]{}
+		set.Add("hello")
+		set.Add("world")
+
+		otherSet := Set[string]{}
+		otherSet.Add("bye")
+		otherSet.Add("world")
+
+		newSet := set.Difference(otherSet)
+
+		assert.Equal(t, []string{"hello"}, newSet.Items())
+	})
+
+	t.Run("Returns the differences of multiple sets", func(t *testing.T) {
+		set := Set[string]{}
+		set.Add("hello")
+		set.Add("world")
+
+		otherSet := Set[string]{}
+		otherSet.Add("bye")
+		otherSet.Add("world")
+
+		anotherSet := Set[string]{}
+		anotherSet.Add("another")
+		anotherSet.Add("world")
+
+		newSet := set.Difference(otherSet, anotherSet)
+
+		assert.Equal(t, []string{"hello"}, newSet.Items())
+	})
+}
+
+func TestSet_SymmetricDifference(t *testing.T) {
+	t.Run("Returns a symmetric difference", func(t *testing.T) {
+		set := Set[string]{}
+		set.Add("hello")
+		set.Add("world")
+
+		otherSet := Set[string]{}
+		otherSet.Add("hello")
+		otherSet.Add("bye")
+
+		newSet := set.SymmetricDifference(otherSet)
+
+		assert.Equal(t, []string{"world", "bye"}, newSet.Items())
+	})
+}
